@@ -54,12 +54,14 @@ import Verifier.SAW.Term.Functor
 data PPOpts = PPOpts { ppBase :: Int
                      , ppColor :: Bool
                      , ppShowLocalNames :: Bool
-                     , ppMaxDepth :: Maybe Int }
+                     , ppMaxDepth :: Maybe Int 
+                     , ppMemo :: Bool }
 
 -- | Default options for pretty-printing
 defaultPPOpts :: PPOpts
 defaultPPOpts = PPOpts { ppBase = 10, ppColor = False,
-                         ppShowLocalNames = True, ppMaxDepth = Nothing }
+                         ppShowLocalNames = True, ppMaxDepth = Nothing,
+                         ppMemo = True }
 
 -- | Options for printing with a maximum depth
 depthPPOpts :: Int -> PPOpts
@@ -509,7 +511,10 @@ shouldMemoizeTerm t =
 -- let-bindings for the entries in the memoization table. If the flag is true,
 -- compute a global table, otherwise compute a local table.
 ppTermWithMemoTable :: Prec -> Bool -> Term -> PPM Doc
-ppTermWithMemoTable prec global_p trm = ppLets occ_map_elems [] where
+ppTermWithMemoTable prec global_p trm = do
+    memo <- ppMemo <$> ppOpts <$> ask
+    let ome = if memo then occ_map_elems else []
+    ppLets ome [] where
 
   -- Generate an occurrence map for trm, filtering out terms that only occur
   -- once, that are "too small" to memoize, and, for the global table, terms
