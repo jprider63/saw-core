@@ -727,6 +727,8 @@ hoistIfs sc t = do
               , "Prelude.or_idem"
               , "Prelude.not_or"
               , "Prelude.not_and"
+              , "Prelude.not_True"
+              , "Prelude.not_False"
               ]
    let ss = addRules rules emptySimpset
 
